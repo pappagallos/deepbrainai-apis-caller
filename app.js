@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -15,11 +16,16 @@ const io = require('socket.io')(nodeServer, {
 
 // set configuration
 dotenv.config();
-const _SOCKET_PORT = process.env.SOCKET_PORT;
+const { SOCKET_PORT, MONGO_URI } = process.env;
 
 // routers
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const clientRouter = require('./routes/client');
+
+// mongoose configuration
+mongoose
+  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Successfully connected to mongodb'))
+  .catch(e => console.error(e));
 
 // using libs
 app.use(logger('dev'));
@@ -29,8 +35,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // using router
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/client', clientRouter);
 
 // socket.io logics
 io.on('connection', (socket) => {
@@ -45,8 +50,8 @@ io.on('connection', (socket) => {
     });
 });
 
-nodeServer.listen(_SOCKET_PORT, () => {
-    console.log(_SOCKET_PORT);
+nodeServer.listen(SOCKET_PORT, () => {
+    console.log(SOCKET_PORT);
 })
 
 module.exports = app;
