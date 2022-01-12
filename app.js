@@ -20,6 +20,7 @@ const { SOCKET_PORT, MONGO_URI } = process.env;
 
 // routers
 const clientRouter = require('./routes/client');
+const { clearInterval } = require('timers');
 
 // mongoose configuration
 mongoose
@@ -41,12 +42,17 @@ app.use('/client', clientRouter);
 io.on('connection', (socket) => {
     console.log('a user connected');
 
+    // 핵심 기능 테스트
+    let interval;
     socket.on('message', ({ message }) => {
-        console.log(message);
+        interval = setInterval(() => {
+            socket.emit('show_ai_human', [{number: 10, name: '이우진', video_url: 'https://ai-platform-public.s3.ap-northeast-2.amazonaws.com/ysy_2_45aa07eeeefe54779bd5d46e87907e26.mp4'}]);
+        }, 10000);
     });
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
+        clearInterval(interval);
     });
 });
 
