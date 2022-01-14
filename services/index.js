@@ -8,18 +8,19 @@ const {
     asyncFindProject
 } = require('../apis');
 
-const fetchVideo = async (text, socket) => {
+const fetchVideo = async (name, number, socket) => {
     try {
+        const convertedName = name.split('');
+        convertedName.splice(1, 0, ',');
+        convertedName.join('');
+
         const { appId, token } = await generateClientToken();
-        // const { models } = await getModelList(appId, token);
-        // const { model } = await getModelInfo(appId, token, 'ysy');
-        const video = await makeVideo(appId, token, text, 'ysy');
-        const result = await asyncFindProject(appId, token, video.data.key, socket);
+        const { key } = await makeVideo(appId, token, `${convertedName}님! ${number}번, 창구로, 이동해 주시기 바랍니다.`, 'ysy');
+        const { video } = await asyncFindProject(appId, token, key, socket);
         
-        console.log(JSON.stringify(result));
+        return { number, name, video_url: video };
 
     } catch (error) {
-        console.error(error);
         throw new Error(error);
     }
 }

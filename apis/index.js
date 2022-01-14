@@ -72,7 +72,7 @@ const makeVideo = async (appId, token, text, model) => {
 
         const { data } = await axios.post('makeVideo', body);
 
-        return data;
+        return data.data;
     } catch (error) {
         throw new Error(error);
     }
@@ -100,7 +100,6 @@ const findProject = async (appId, token, key) => {
 }
 
 const asyncFindProject = async (appId, token, key, socket) => {
-    console.log(key);
     return new Promise((resolve, reject) => {
         try {
             const interval = setInterval(async () => {
@@ -108,7 +107,7 @@ const asyncFindProject = async (appId, token, key, socket) => {
 
                 if (project.data.progress === 100) {
                     clearInterval(interval);
-                    resolve(project);
+                    resolve(project.data);
                 } else {
                     socket.emit('progress', [project]);
                 }

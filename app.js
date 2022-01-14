@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
 const dotenv = require('dotenv');
 const { fetchVideo } = require('./services');
 
@@ -30,7 +29,6 @@ mongoose
   .catch(e => console.error(e));
 
 // using libs
-app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -44,10 +42,11 @@ io.on('connection', (socket) => {
     console.log('a user connected');
 
     // 핵심 기능 테스트
-    let interval;
-    socket.on('message', ({ message }) => {
+    socket.on('message', async ({ message }) => {
         try {
-            fetchVideo('이,우진님! 1번, 창구로, 이동해 주시기 바랍니다.', socket);
+            const { number, name, video_url } = await fetchVideo('이우진', '11', socket);
+            socket.emit('show_ai_human', [{ number, name, video_url }]);
+
         } catch (error) {
             console.error(error);
         }
@@ -65,5 +64,31 @@ io.on('connection', (socket) => {
 nodeServer.listen(SOCKET_PORT, () => {
     console.log(SOCKET_PORT);
 })
+
+// error handlers
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        log.error("Something went wrong:", err);
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+    log.error("Something went wrong:", err);
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
+});
+
 
 module.exports = app;
