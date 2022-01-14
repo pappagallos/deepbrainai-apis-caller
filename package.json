@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",
@@ -15,6 +16,7 @@
     "mongoose-auto-increment": "^5.0.1",
     "morgan": "~1.9.1",
     "socket.io": "^4.4.1",
+    "uuid": "^8.3.2",
     "ws": "^8.4.0"
   }
 }

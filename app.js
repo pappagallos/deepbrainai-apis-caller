@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const dotenv = require('dotenv');
+const { fetchVideo } = require('./services');
 
 const app = express();
 const nodeServer = require('http').createServer(app);
@@ -45,9 +46,14 @@ io.on('connection', (socket) => {
     // 핵심 기능 테스트
     let interval;
     socket.on('message', ({ message }) => {
-        interval = setInterval(() => {
-            socket.emit('show_ai_human', [{number: 10, name: '이우진', video_url: 'https://ai-platform-public.s3.ap-northeast-2.amazonaws.com/ysy_2_45aa07eeeefe54779bd5d46e87907e26.mp4'}]);
-        }, 10000);
+        try {
+            fetchVideo('이,우진님! 1번, 창구로, 이동해 주시기 바랍니다.', socket);
+        } catch (error) {
+            console.error(error);
+        }
+        // interval = setInterval(() => {
+        //     socket.emit('show_ai_human', [{number: 10, name: '이우진', video_url: 'https://ai-platform-public.s3.ap-northeast-2.amazonaws.com/ysy_2_45aa07eeeefe54779bd5d46e87907e26.mp4'}]);
+        // }, 10000);
     });
 
     socket.on('disconnect', () => {
