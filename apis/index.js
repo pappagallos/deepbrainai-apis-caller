@@ -100,13 +100,16 @@ const findProject = async (appId, token, key) => {
 }
 
 const asyncFindProject = async (appId, token, key, socket) => {
+    // 비동기 처리를 위해 Promise 로 return
     return new Promise((resolve, reject) => {
         try {
+            // .5초 마다 API 를 호출하여 동여상 변환 상태를 소켓으로 전달
             const interval = setInterval(async () => {
                 const project = await findProject(appId, token, key);
 
-                if (project.data.progress === 100) {
+                if (project && project.data.progress === 100) {
                     clearInterval(interval);
+
                     resolve(project.data);
                 } else {
                     socket.emit('progress', [project]);

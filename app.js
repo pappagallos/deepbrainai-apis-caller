@@ -65,30 +65,8 @@ nodeServer.listen(SOCKET_PORT, () => {
     console.log(SOCKET_PORT);
 })
 
-// error handlers
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-        log.error("Something went wrong:", err);
-        res.status(err.status || 500);
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-    log.error("Something went wrong:", err);
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
+app.use(function (error, req, res, next) {
+    res.json({ message: error.message })
 });
-
-
+  
 module.exports = app;

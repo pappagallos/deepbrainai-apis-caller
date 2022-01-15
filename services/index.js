@@ -1,4 +1,3 @@
-// const axios = require('../utils/axiosInstance');
 const { 
     generateClientToken,
     getModelList,
@@ -27,4 +26,4 @@ const fetchVideo = async (name, number, socket) => {
 
 module.exports = {
     fetchVideo
-}
+} 
