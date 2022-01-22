@@ -117,7 +117,7 @@ const asyncFindProject = async (appId, token, key, socket) => {
                 } else {
                     socket.emit('progress', [project]);
                 }
-            }, 1000);
+            }, 500);
         } catch (error) {
             reject(error);
         }
