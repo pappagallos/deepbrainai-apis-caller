@@ -43,18 +43,6 @@ io.on('connection', (socket) => {
     app.locals.socket = socket;
     console.log('a user connected');
 
-    // 핵심 기능 테스트
-    socket.on('message', async ({ message }) => {
-        try {
-            const { counterNumber, name, video } = await fetchVideo('이우진', '11', socket);
-            console.log(counterNumber, name, video);
-            socket.emit('show_ai_human', [{ counterNumber, name, video }]);
-
-        } catch (error) {
-            console.error(error);
-        }
-    });
-
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });

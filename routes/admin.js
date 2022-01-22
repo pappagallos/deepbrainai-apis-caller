@@ -2,6 +2,7 @@ const express = require('express');
 const asyncify = require('express-asyncify');
 const router = asyncify(express.Router());
 const callerModel = require('../models/caller');
+const { fetchVideo } = require('../services');
 
 /**
  * 대기자 리스트 API
@@ -24,11 +25,18 @@ router.put('/', async (req, res, next) => {
     try {
         // Express 전역 변수 Socket
         const socket = req.app.locals.socket;
-        const { id } = req.body;
+        const { id, counter_number, name } = req.body;
         
-        // mongoDB 데이터 추가 후 관리자 페이지에 add_client 소켓 전송
+        const fetchVideoResponse = await fetchVideo(name, counter_number, socket);
+        
         await callerModel.findByIdAndUpdate(id, {is_called: true});
+
         socket.emit('complete_client', [{ id }]);
+        socket.emit('show_ai_human', [{ 
+            counterNumber: fetchVideoResponse.counterNumber, 
+            name: fetchVideoResponse.name, 
+            video: fetchVideoResponse.video 
+        }]);
   
         res.status(200).send({ message: 'success.'}).end();
   

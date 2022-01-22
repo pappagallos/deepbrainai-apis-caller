@@ -106,11 +106,12 @@ const asyncFindProject = async (appId, token, key, socket) => {
             // .5초 마다 API 를 호출하여 동영상 변환 상태를 소켓으로 전달
             const interval = setInterval(async () => {
                 const project = await findProject(appId, token, key);
-                console.log(project.data.progress);
+                console.log(`[Converting/${key}] ${project.data.progress}`);
 
                 if (project && project.data.progress === 100) {
                     // 가끔 project.data.video 가 undefined 로 넘어오는 경우가 있어 한 번 더 체크
                     if (project.data.video) {
+                        console.log(`[Successfully Converted/${key}] ${JSON.stringify(project.data)}`);
                         clearInterval(interval);
                         resolve(project.data);
                     }
