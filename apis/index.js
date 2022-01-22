@@ -112,6 +112,7 @@ const asyncFindProject = async (appId, token, key, socket) => {
                     // 가끔 project.data.video 가 undefined 로 넘어오는 경우가 있어 한 번 더 체크
                     if (project.data.video) {
                         console.log(`[Successfully Converted/${key}] ${JSON.stringify(project.data)}`);
+
                         clearInterval(interval);
                         resolve(project.data);
                     }

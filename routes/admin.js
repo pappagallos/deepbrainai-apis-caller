@@ -25,14 +25,15 @@ router.put('/', async (req, res, next) => {
     try {
         // Express 전역 변수 Socket
         const socket = req.app.locals.socket;
-        const { id, counter_number, name } = req.body;
+        const { id, counter_number } = req.body;
         
-        const fetchVideoResponse = await fetchVideo(name, counter_number, socket);
+        const client = await callerModel.findById(id);
+        const fetchVideoResponse = await fetchVideo(client.name, counter_number, socket);
         
         await callerModel.findByIdAndUpdate(id, {is_called: true});
 
         socket.emit('complete_client', [{ id }]);
-        socket.emit('show_ai_human', [{ 
+        socket.emit('show_ai_human', [{
             counterNumber: fetchVideoResponse.counterNumber, 
             name: fetchVideoResponse.name, 
             video: fetchVideoResponse.video 

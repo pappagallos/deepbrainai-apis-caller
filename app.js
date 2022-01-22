@@ -2,9 +2,9 @@ const express = require('express');
 const asyncify = require('express-asyncify');
 const mongoose = require('mongoose');
 const path = require('path');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
-const { fetchVideo } = require('./services');
 
 const app = asyncify(express());
 const nodeServer = require('http').createServer(app);
@@ -33,6 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
 
 // 라우터 구성
 app.use('/client', clientRouter);

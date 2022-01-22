@@ -11,11 +11,11 @@ router.post('/', async (req, res, next) => {
   try {
     // Express 전역 변수 Socket
     const socket = req.app.locals.socket;
-    const { counter_number, name } = req.body;
+    const { name } = req.body;
 
     // mongoDB 데이터 추가 후 관리자 페이지에 add_client 소켓 전송
-    const id = await (await callerModel.create({ counter_number, name }))._id;
-    socket.emit('add_client', [{ id, counter_number, name }]);
+    const id = await (await callerModel.create({ name }))._id;
+    socket.emit('add_client', [{ id, name }]);
 
     res.status(200).send({ message: 'success.'}).end();
 

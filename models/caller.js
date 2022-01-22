@@ -22,7 +22,6 @@ const CallerSchema = new mongoose.Schema({
 /**
  * Validations
  */
-CallerSchema.path('counter_number').required(true, 'counter_number 는 빈 값이 올 수 없습니다.');
 CallerSchema.path('name').required(true, 'name 은 빈 값이 올 수 없습니다.');
  
 
