@@ -1,11 +1,12 @@
 const express = require('express');
+const asyncify = require('express-asyncify');
 const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const { fetchVideo } = require('./services');
 
-const app = express();
+const app = asyncify(express());
 const nodeServer = require('http').createServer(app);
 const io = require('socket.io')(nodeServer, {
     cors: {
@@ -44,29 +45,22 @@ io.on('connection', (socket) => {
     // 핵심 기능 테스트
     socket.on('message', async ({ message }) => {
         try {
-            const { number, name, video_url } = await fetchVideo('이우진', '11', socket);
-            socket.emit('show_ai_human', [{ number, name, video_url }]);
+            const { callNumber, counterNumber, name, video } = await fetchVideo('21', '이우진', '11', socket);
+            console.log(callNumber, counterNumber, name, video);
+            socket.emit('show_ai_human', [{ callNumber, counterNumber, name, video }]);
 
         } catch (error) {
             console.error(error);
         }
-        // interval = setInterval(() => {
-        //     socket.emit('show_ai_human', [{number: 10, name: '이우진', video_url: 'https://ai-platform-public.s3.ap-northeast-2.amazonaws.com/ysy_2_45aa07eeeefe54779bd5d46e87907e26.mp4'}]);
-        // }, 10000);
     });
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
-        clearInterval(interval);
     });
 });
 
 nodeServer.listen(SOCKET_PORT, () => {
     console.log(SOCKET_PORT);
-})
-
-app.use(function (error, req, res, next) {
-    res.json({ message: error.message })
 });
   
 module.exports = app;

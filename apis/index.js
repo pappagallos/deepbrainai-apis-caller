@@ -103,19 +103,21 @@ const asyncFindProject = async (appId, token, key, socket) => {
     // 비동기 처리를 위해 Promise 로 return
     return new Promise((resolve, reject) => {
         try {
-            // .5초 마다 API 를 호출하여 동여상 변환 상태를 소켓으로 전달
+            // .5초 마다 API 를 호출하여 동영상 변환 상태를 소켓으로 전달
             const interval = setInterval(async () => {
                 const project = await findProject(appId, token, key);
+                console.log(project.data.progress);
 
                 if (project && project.data.progress === 100) {
-                    clearInterval(interval);
-
-                    resolve(project.data);
+                    // 가끔 project.data.video 가 undefined 로 넘어오는 경우가 있어 한 번 더 체크
+                    if (project.data.video) {
+                        clearInterval(interval);
+                        resolve(project.data);
+                    }
                 } else {
                     socket.emit('progress', [project]);
                 }
-            }, 500);
-
+            }, 1000);
         } catch (error) {
             reject(error);
         }
