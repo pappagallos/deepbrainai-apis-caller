@@ -9,19 +9,13 @@ const { parseDateFormat } = require('../utils/functions');
  */
 router.post('/', async (req, res, next) => {
   try {
+    // Express 전역 변수 Socket
+    const socket = req.app.locals.socket;
     const { counter_number, name } = req.body;
 
-    // 오늘 일자로 생성된 데이터가 있는지 확인
-    const date = new Date();
-    const today = parseDateFormat(date, '-');
-    const latestTicket = await callerModel.findOne().sort({ created_at: 'desc' }).where('created_at');
-    console.log(latestTicket);
-
-    // await callerModel.create({
-    //   call_number: (latestTicket && latestTicket.call_number) ? Number(latestTicket.call_number) + 1 : 1,
-    //   counter_number,
-    //   name
-    // });
+    // mongoDB 데이터 추가 후 관리자 페이지에 add_client 소켓 전송
+    const id = await (await callerModel.create({ counter_number, name }))._id;
+    socket.emit('add_client', [{ id, counter_number, name }]);
 
     res.status(200).send({ message: 'success.'}).end();
 

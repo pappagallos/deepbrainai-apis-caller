@@ -6,7 +6,6 @@ const autoIncrement = require('mongoose-auto-increment');
  */
 const CallerSchema = new mongoose.Schema({
     id: { type: Number, equired: true, unique: true, index: true },     // 고유번호
-    call_number: { type: Number, trim: true },                          // 고객순번
     counter_number: { type: Number, default: '', trim: true },          // 창구번호
     name: { type: String, default: '', trim: true },                    // 고객명
     is_called: { type: Boolean, default: false },                       // 호출여부
@@ -23,7 +22,6 @@ const CallerSchema = new mongoose.Schema({
 /**
  * Validations
  */
-CallerSchema.path('call_number').required(true, 'call_number 는 빈 값이 올 수 없습니다.');
 CallerSchema.path('counter_number').required(true, 'counter_number 는 빈 값이 올 수 없습니다.');
 CallerSchema.path('name').required(true, 'name 은 빈 값이 올 수 없습니다.');
  

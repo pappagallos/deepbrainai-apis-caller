@@ -11,7 +11,7 @@ const nodeServer = require('http').createServer(app);
 const io = require('socket.io')(nodeServer, {
     cors: {
         origin: '*',
-        methods: ['GET', 'POST']
+        methods: ['GET', 'POST', 'DELETE', 'PUT']
     }
 });
 
@@ -19,9 +19,8 @@ const io = require('socket.io')(nodeServer, {
 dotenv.config();
 const { SOCKET_PORT, MONGO_URI } = process.env;
 
-// routers
 const clientRouter = require('./routes/client');
-const { clearInterval } = require('timers');
+const adminRouter = require('./routes/admin');
 
 // mongoose configuration
 mongoose
@@ -35,19 +34,21 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// using router
+// 라우터 구성
 app.use('/client', clientRouter);
+app.use('/admin', adminRouter);
 
-// socket.io logics
+// socket.io
 io.on('connection', (socket) => {
+    app.locals.socket = socket;
     console.log('a user connected');
 
     // 핵심 기능 테스트
     socket.on('message', async ({ message }) => {
         try {
-            const { callNumber, counterNumber, name, video } = await fetchVideo('21', '이우진', '11', socket);
-            console.log(callNumber, counterNumber, name, video);
-            socket.emit('show_ai_human', [{ callNumber, counterNumber, name, video }]);
+            const { counterNumber, name, video } = await fetchVideo('이우진', '11', socket);
+            console.log(counterNumber, name, video);
+            socket.emit('show_ai_human', [{ counterNumber, name, video }]);
 
         } catch (error) {
             console.error(error);
@@ -62,5 +63,5 @@ io.on('connection', (socket) => {
 nodeServer.listen(SOCKET_PORT, () => {
     console.log(SOCKET_PORT);
 });
-  
+
 module.exports = app;
