@@ -14,8 +14,9 @@ router.post('/', async (req, res, next) => {
     const { name } = req.body;
 
     // mongoDB 데이터 추가 후 관리자 페이지에 add_client 소켓 전송
-    const id = await (await callerModel.create({ name }))._id;
-    socket.emit('add_client', [{ id, name }]);
+    await (await callerModel.create({ name }));
+    const client = await callerModel.find({ is_called: false }).sort({ created_at: 1 });
+    socket.emit('add_client', [client]);
 
     res.status(200).send({ message: 'success.'}).end();
 

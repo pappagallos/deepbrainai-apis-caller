@@ -10,9 +10,9 @@ const { fetchVideo } = require('../services');
 router.get('/', async (req, res, next) => {
     try {
         // mongoDB 데이터 추가 후 관리자 페이지에 add_client 소켓 전송
-        const data = await callerModel.find({ is_called: false });
+        const result = await callerModel.find({ is_called: false }).sort({ created_at: 1 });
   
-        res.status(200).send({ message: 'success.', data }).end();
+        res.status(200).send({ message: 'success.', result }).end();
     } catch ({ errors }) {
       res.status(500).send({ errors }).end();
     }
