@@ -31,8 +31,9 @@ router.put('/', async (req, res, next) => {
         const fetchVideoResponse = await fetchVideo(client.name, counter_number, socket);
         
         await callerModel.findByIdAndUpdate(id, {is_called: true});
+        const result = await callerModel.find({ is_called: false }).sort({ created_at: 1 });
 
-        socket.emit('complete_client', [{ id }]);
+        socket.emit('complete_client', [result]);
         socket.emit('show_ai_human', [{
             counterNumber: fetchVideoResponse.counterNumber, 
             name: fetchVideoResponse.name, 

@@ -41,7 +41,7 @@ app.use('/admin', adminRouter);
 
 // socket.io
 io.on('connection', (socket) => {
-    app.locals.socket = socket;
+    app.locals.socket = io.sockets;
     console.log('a user connected');
 
     socket.on('disconnect', () => {
